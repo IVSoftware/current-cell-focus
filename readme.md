@@ -134,4 +134,4 @@ Here's how I tested this solution after changing the two entries in MainForm.Des
     }
 
 
-  [1]: https://i.stack.imgur.com/4xIOr.png
+  [1]: https://github.com/IVSoftware/current-cell-focus/blob/master/current-cell-focus/Screenshots/screenshot.png
