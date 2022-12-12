@@ -65,6 +65,7 @@ namespace current_cell_focus
                             // Either insert after the current row as
                             // shown here, or add to the end of the list.
                             Records.Insert(row, new Record());
+                            BeginInvoke(new Action(()=>BeginEdit(selectAll: true)));
                         }
                         CurrentCell = this[col, row];
                         break;
@@ -78,6 +79,48 @@ namespace current_cell_focus
                     default:
                         base.OnKeyDown(e);
                         break;
+                }
+            }
+        }
+        protected override void OnEditingControlShowing(DataGridViewEditingControlShowingEventArgs e)
+        {
+            base.OnEditingControlShowing(e);
+            // Remove the existing handler if there is one
+            e.Control.PreviewKeyDown -= localOnPreviewKeyDown;  
+            e.Control.PreviewKeyDown += localOnPreviewKeyDown;
+
+            void localOnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+            {
+                if (CurrentCell != null)
+                {
+                    var row = CurrentCell.RowIndex;
+                    var col = CurrentCell.ColumnIndex;
+                    switch (e.KeyData)
+                    {
+                        case Keys.Return:
+                            col++;
+                            // [ToDo] Allow for non-visible rows (will fail).
+                            if (col.Equals(Columns.Count))
+                            {
+                                row++;
+                                if (row < Rows.Count)
+                                {
+                                    CurrentCell = this[0, row];
+                                }
+                            }
+                            else
+                            {
+                                CurrentCell = this[col, row];
+                            }
+                            break;
+                        case Keys.Back:
+                            col--;
+                            if (col >= 0)
+                            {
+                                CurrentCell = this[col, row];
+                            }
+                            break;
+                    }
                 }
             }
         }
